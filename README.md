@@ -1,2 +1,2 @@
-# With-U
+# ResQ
 AI-powered personal safety application
