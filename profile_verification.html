@@ -310,13 +310,13 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <a href="index.html" class="logo">
+            <a href="{{ url_for('home') }}" class="logo">
                 <div class="logo-icon">
-                    <img src="icon.png" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                    <i class="fas fa-shield-alt"></i>
                 </div>
                 <div class="logo-text">Res<span>Q</span></div>
             </a>
-            <a href="index.html" class="btn btn-outline">Back to Home</a>
+            <a href="{{ url_for('home') }}" class="btn btn-outline">Back to Home</a>
         </div>
         
         <div class="header-section">
@@ -335,7 +335,7 @@
                 <div class="status-subtext" id="statusSubtext">Checking against FBI database</div>
             </div>
             
-            <form action="result.html" method="post" enctype="multipart/form-data" id="uploadForm">
+            <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data" id="uploadForm">
                 <div class="upload-area">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -408,13 +408,7 @@
         
         // Update loading animation
         function updateLoadingState(stepIndex) {
-            if (stepIndex >= loadingSteps.length) {
-                // Redirect to results page when animation completes
-                setTimeout(() => {
-                    window.location.href = 'result.html';
-                }, 500);
-                return;
-            }
+            if (stepIndex >= loadingSteps.length) return;
             
             const step = loadingSteps[stepIndex];
             progressBar.style.width = step.progress + '%';
@@ -436,21 +430,21 @@
         
         // Form submission handler
         form.addEventListener('submit', function(e) {
-            // Prevent the actual form submission since we're handling it manually
-            e.preventDefault();
-            
             // Check if a file is selected
             if (!fileInput.files[0]) {
-                alert("Please select an image file first");
-                return;
+                return; // Let the form validation handle it
             }
             
             // Show loading overlay
             loadingOverlay.classList.add('active');
             
-            // Start loading animation and handle redirection in the animation completion
+            // Start loading animation - don't prevent form submission
+            // The form will naturally submit and redirect to results
             progressBar.style.width = '0%';
             updateLoadingState(0);
+            
+            // We don't prevent the default form submission - let it continue
+            // This is just to show the loading animation while submitting
         });
 
         // Drag and drop functionality for the upload area
