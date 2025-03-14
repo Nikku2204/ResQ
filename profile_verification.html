@@ -4,21 +4,496 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Verification - ResQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #2b7a78; }
-        input, button { margin-top: 10px; padding: 10px; }
-        button { background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #e5316d;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .logo-text span {
+            color: #e5316d;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            border: 2px solid #e5316d;
+            color: #e5316d;
+            background-color: transparent;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2b7a78;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .verification-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #e5316d;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #e5316d;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            background-color: #c82559;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 49, 109, 0.25);
+        }
+
+        .info-section {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .info-title {
+            color: #e5316d;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .info-text {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style-type: none;
+            margin-bottom: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(229, 49, 109, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e5316d;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feature-text h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .feature-text p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .spinner:after {
+            content: " ";
+            display: block;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #e5316d;
+            border-color: #e5316d transparent #e5316d transparent;
+            animation: spinner 1.2s linear infinite;
+        }
+
+        .progress-container {
+            width: 80%;
+            max-width: 300px;
+            background-color: #f0f0f0;
+            border-radius: 100px;
+            height: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #e5316d;
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+
+        .status-text {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-subtext {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @keyframes spinner {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .verification-container, .info-section {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Profile Verification</h1>
-    <p>Upload a profile image to check against criminal databases.</p>
-    
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <br>
-        <button type="submit">🔍 Start Verification</button>
-    </form>
+    <div class="container">
+        <div class="navbar">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <img src="icon.png" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div class="logo-text">Res<span>Q</span></div>
+            </a>
+            <a href="index.html" class="btn btn-outline">Back to Home</a>
+        </div>
+        
+        <div class="header-section">
+            <h1>Profile Verification</h1>
+            <p class="subtitle">Upload a profile image to check against criminal databases including FBI and Interpol records.</p>
+        </div>
+        
+        <div class="verification-container">
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="status-text" id="statusText">Processing Image...</div>
+                <div class="status-subtext" id="statusSubtext">Checking against FBI database</div>
+            </div>
+            
+            <form action="result.html" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p class="upload-text">Drag & drop image or click to browse</p>
+                    <input type="file" name="file" accept="image/*" required id="fileInput">
+                </div>
+                <button type="submit" id="submitBtn">
+                    <i class="fas fa-shield-alt"></i>
+                    Start Verification
+                </button>
+            </form>
+        </div>
+        
+        <div class="info-section">
+            <h2 class="info-title">Safety First</h2>
+            <p class="info-text">Verify any profile picture against global criminal databases including FBI Most Wanted and Interpol Red Notices to ensure your safety before meeting.</p>
+            
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Real-time Checks</h3>
+                        <p>Our system checks profile pictures against international fugitive databases in seconds.</p>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Comprehensive Database</h3>
+                        <p>We cross-reference images with FBI Most Wanted, Interpol Red Notices, and other global criminal databases.</p>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Private & Secure</h3>
+                        <p>Your uploads are processed securely and not stored longer than needed for verification.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Form submission and loading animation
+        const form = document.getElementById('uploadForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const progressBar = document.getElementById('progressBar');
+        const statusText = document.getElementById('statusText');
+        const statusSubtext = document.getElementById('statusSubtext');
+        const fileInput = document.getElementById('fileInput');
+        
+        // Loading steps and timing
+        const loadingSteps = [
+            { progress: 15, text: "Processing Image...", subtext: "Detecting faces and features" },
+            { progress: 30, text: "Analyzing Face...", subtext: "Extracting facial recognition data" },
+            { progress: 45, text: "Checking FBI Database...", subtext: "Searching through Most Wanted records" },
+            { progress: 60, text: "Checking Interpol Database...", subtext: "Scanning Red Notices" },
+            { progress: 75, text: "Performing Reverse Image Search...", subtext: "Searching across the web" },
+            { progress: 90, text: "Finalizing Results...", subtext: "Preparing verification report" },
+            { progress: 100, text: "Complete!", subtext: "Redirecting to results page" }
+        ];
+        
+        // Update loading animation
+        function updateLoadingState(stepIndex) {
+            if (stepIndex >= loadingSteps.length) {
+                // Redirect to results page when animation completes
+                setTimeout(() => {
+                    window.location.href = 'result.html';
+                }, 500);
+                return;
+            }
+            
+            const step = loadingSteps[stepIndex];
+            progressBar.style.width = step.progress + '%';
+            statusText.textContent = step.text;
+            statusSubtext.textContent = step.subtext;
+            
+            setTimeout(() => {
+                updateLoadingState(stepIndex + 1);
+            }, 1000); // Change step every second
+        }
+        
+        // File input change handler - show file name
+        fileInput.addEventListener('change', function(e) {
+            if (this.files[0]) {
+                const fileName = this.files[0].name;
+                document.querySelector('.upload-text').textContent = fileName;
+            }
+        });
+        
+        // Form submission handler
+        form.addEventListener('submit', function(e) {
+            // Prevent the actual form submission since we're handling it manually
+            e.preventDefault();
+            
+            // Check if a file is selected
+            if (!fileInput.files[0]) {
+                alert("Please select an image file first");
+                return;
+            }
+            
+            // Show loading overlay
+            loadingOverlay.classList.add('active');
+            
+            // Start loading animation and handle redirection in the animation completion
+            progressBar.style.width = '0%';
+            updateLoadingState(0);
+        });
+
+        // Drag and drop functionality for the upload area
+        const uploadArea = document.querySelector('.upload-area');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadArea.style.borderColor = '#e5316d';
+            uploadArea.style.backgroundColor = 'rgba(229, 49, 109, 0.05)';
+        }
+        
+        function unhighlight() {
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.backgroundColor = 'transparent';
+        }
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length) {
+                fileInput.files = files;
+                document.querySelector('.upload-text').textContent = files[0].name;
+            }
+        }
+    </script>
 </body>
 </html>
