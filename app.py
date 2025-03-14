@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, url_for, redirect, jsonify
 from google.cloud import vision
 import requests
 import os
@@ -10,6 +10,7 @@ from deepface import DeepFace
 import imghdr
 import concurrent.futures
 from functools import partial
+import json
 
 # Load environment variables
 load_dotenv()
@@ -26,11 +27,53 @@ client = vision.ImageAnnotatorClient()
 upload_folder = "static/uploads"
 fbi_image_folder = "static/fugitives/fbi"
 interpol_image_folder = "static/fugitives/interpol"
+static_images_folder = "static/images"  # Added for new static resources
 
 os.makedirs(upload_folder, exist_ok=True)
 os.makedirs(fbi_image_folder, exist_ok=True)
 os.makedirs(interpol_image_folder, exist_ok=True)
+os.makedirs(static_images_folder, exist_ok=True)  # Ensure images directory exists
 
+# OpenAI analysis function
+def analyze_search_results(search_results):
+    """
+    Analyze search results from Scrapingdog using OpenAI to generate a summary.
+    
+    Parameters:
+    search_results (list): List of dictionaries containing search result data
+    
+    Returns:
+    str: A quirky short summary of the person based on the search results
+    """
+    if not search_results or len(search_results) == 0:
+        return "No information available for analysis."
+    
+    # Format the search results
+    formatted_results = ""
+    for i, result in enumerate(search_results[:10]):  # Limit to first 10 results
+        formatted_results += f"{i+1}. Title: {result.get('title', 'No Title')}\n"
+        formatted_results += f"   Link: {result.get('link', 'No Link')}\n\n"
+    
+    try:
+        # Create client and make API call
+        client = openai.OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[
+                {"role": "system", "content": "You are an expert at analyzing profile images and search results. Provide concise information about the person in the image."},
+                {"role": "user", "content": f"Here are the search results:\n{formatted_results}\n\nProvide a brief 2-3 sentence summary about the person in the image and a short recommendation regarding whether to trust/meet this person based ONLY on these search results."}
+            ],
+            max_tokens=150  # Reduced for shorter response
+        )
+        
+        # Extract and return the response
+        summary = response.choices[0].message.content
+        return summary
+    
+    except Exception as e:
+        print(f"Error calling OpenAI API: {str(e)}")
+        return "Unable to generate analysis at this time. Please try again later."
+    
 # Convert any image to JPG format with better error handling
 def convert_to_jpg(image_path):
     """Convert any image to JPG format with better error handling."""
@@ -131,7 +174,7 @@ def check_database(image_path, database_folder):
     candidates.sort(key=lambda x: x["distance"])
     
     # Use a stricter threshold for better matching
-    threshold = 0.70  # Adjusted threshold to reduce false positives
+    threshold = 0.65  # Adjusted threshold to reduce false positives
     
     # Check if best match is below threshold
     if candidates and candidates[0]["distance"] < threshold:
@@ -183,6 +226,15 @@ def home():
 @app.route('/profile_verification')
 def profile_verification():
     return render_template("profile_verification.html")
+
+# NEW ROUTES FOR TEAMMATE'S PAGES
+@app.route('/hydrate')
+def hydrate():
+    return render_template("hydrate.html")
+
+@app.route('/aware_ai_demo')
+def aware_ai_demo():
+    return render_template("aware_ai_demo.html")
 
 # Main Upload Function: Handles image verification, searches & matching
 @app.route('/upload', methods=['POST'])
@@ -241,6 +293,20 @@ def upload_image():
         interpol_confidence=interpol_confidence,
         search_results=search_results
     )
+
+# New route to analyze search results
+@app.route('/analyze_results', methods=['POST'])
+def analyze_results():
+    # Get search results from the form
+    search_results_json = request.form.get('search_results')
+    
+    # Convert JSON string to Python list
+    search_results = json.loads(search_results_json)
+    
+    # Analyze the results
+    analysis = analyze_search_results(search_results)
+    
+    return jsonify({"analysis": analysis})
 
 # Debug route to test FBI matching and inspect fugitive images
 @app.route('/debug_fbi_matching')
