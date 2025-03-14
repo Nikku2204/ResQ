@@ -225,6 +225,34 @@
             box-shadow: 0 5px 15px rgba(229, 49, 109, 0.2);
         }
         
+        /* Analysis section styling */
+        #analysis-result {
+            background-color: #f8f9fa;
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        #loading-spinner {
+            text-align: center;
+            color: var(--accent);
+            font-size: 16px;
+        }
+        
+        #loading-spinner .fa-spinner {
+            margin-right: 10px;
+        }
+        
+        #analysis-content {
+            padding: 10px;
+            line-height: 1.7;
+        }
+        
+        #analysis-content strong {
+            color: var(--accent);
+        }
+        
         /* Responsive design */
         @media (max-width: 768px) {
             .result-box {
@@ -276,73 +304,155 @@
     <div class="container">
         <h1>🔍 Profile Verification Results</h1>
 
-        <!-- Error message section (hidden by default) -->
-        <div id="error-section" style="display: none;">
-            <p class="alert">Error processing your image</p>
+        {% if message %}
+            <p class="alert">{{ message }}</p>
             <div class="result-box">
                 <p>Please try again with a valid image file.</p>
-                <a href="profile_verification.html" class="btn btn-primary">
+                <a href="{{ url_for('profile_verification') }}" class="btn btn-primary">
                     <i class="fas fa-redo"></i> Try Again
                 </a>
-                <a href="index.html" class="btn btn-outline">
+                <a href="{{ url_for('home') }}" class="btn btn-outline">
                     <i class="fas fa-home"></i> Back to Home
                 </a>
             </div>
-        </div>
-            
-        <!-- Results section (shown by default) -->
+        {% else %}
             <div class="result-box">
                 <h2>📷 Uploaded Image</h2>
-                <img src="icon.png" alt="Uploaded Image" style="max-width: 200px;">
+                <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image">
             </div>
 
             <div class="result-box">
                 <h2>😃 Face Detection</h2>
-                <p>Faces Detected: <strong>1</strong></p>
+                <p>Faces Detected: <strong>{{ faces_detected }}</strong></p>
             </div>
 
             <div class="result-box">
                 <h2>🚨 FBI Fugitive Match</h2>
-                <p class="success">✅ No matches found in the FBI database.</p>
+                {% if is_fbi_match %}
+                    <p class="alert">⚠️ Match Found!</p>
+                    <p><strong>Name:</strong> {{ fbi_name }}</p>
+                    <p class="confidence-score">🔥 Confidence Score: {{ fbi_confidence }}</p>
+                    <img src="{{ fbi_image_url }}" alt="FBI Match">
+                {% else %}
+                    <p class="success">✅ No matches found in the FBI database.</p>
+                {% endif %}
             </div>
 
             <div class="result-box">
                 <h2>🌍 Interpol Fugitive Match</h2>
-                <p class="success">✅ No matches found in the Interpol database.</p>
+                {% if is_interpol_match %}
+                    <p class="alert">⚠️ Match Found!</p>
+                    <p><strong>Name:</strong> {{ interpol_name }}</p>
+                    <p class="confidence-score">🔥 Confidence Score: {{ interpol_confidence }}</p>
+                    <img src="{{ interpol_image_url }}" alt="Interpol Match">
+                {% else %}
+                    <p class="success">✅ No matches found in the Interpol database.</p>
+                {% endif %}
             </div>
             
             <!-- Reverse Image Search Results -->
             <div class="result-box">
                 <h2>🌐 Where Else Does This Image Appear?</h2>
-                <ul class="reverse-search-results">
-                    <li>
-                        <img src="icon.png" alt="Thumbnail" style="width: 100px; height: 100px; object-fit: contain;">
-                        <a href="#" target="_blank">Personal profile image - no suspicious appearances found</a>
-                    </li>
-                </ul>
+                {% if search_results %}
+                    <ul class="reverse-search-results">
+                        {% for result in search_results %}
+                            <li>
+                                {% if result.thumbnail %}
+                                    <img src="{{ result.thumbnail }}" alt="Thumbnail">
+                                {% endif %}
+                                <a href="{{ result.link }}" target="_blank">{{ result.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No other appearances found.</p>
+                {% endif %}
+            </div>
+            
+            <!-- AI Analysis Section -->
+            <div class="result-box" id="analysis-section">
+                <h2>🧠 AI Analysis</h2>
+                
+                {% if search_results %}
+                    <p>Request an AI analysis based on the image search results:</p>
+                    <button id="analyze-btn" class="btn btn-primary">
+                        <i class="fas fa-brain"></i> Analyze Profile
+                    </button>
+                    
+                    <div id="analysis-result" style="display: none;">
+                        <div id="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i> Analyzing...
+                        </div>
+                        <div id="analysis-content" style="display: none;"></div>
+                    </div>
+                    
+                    <script>
+                        document.getElementById('analyze-btn').addEventListener('click', function() {
+                            // Show loading state
+                            document.getElementById('analysis-result').style.display = 'block';
+                            document.getElementById('loading-spinner').style.display = 'block';
+                            document.getElementById('analysis-content').style.display = 'none';
+                            
+                            // Prepare the data
+                            const searchResults = {{ search_results|tojson }};
+                            
+                            // Send request to the server
+                            fetch('{{ url_for("analyze_results") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: 'search_results=' + encodeURIComponent(JSON.stringify(searchResults))
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                // Update the UI with the analysis
+                                document.getElementById('loading-spinner').style.display = 'none';
+                                document.getElementById('analysis-content').style.display = 'block';
+                                document.getElementById('analysis-content').innerHTML = '<p><strong>AI Analysis:</strong> ' + data.analysis + '</p>';
+                                
+                                // Disable the button to prevent multiple analyses
+                                document.getElementById('analyze-btn').disabled = true;
+                                document.getElementById('analyze-btn').innerHTML = '<i class="fas fa-check"></i> Analysis Complete';
+                            })
+                            .catch(error => {
+                                document.getElementById('loading-spinner').style.display = 'none';
+                                document.getElementById('analysis-content').style.display = 'block';
+                                document.getElementById('analysis-content').innerHTML = '<p class="alert">Error: Unable to generate analysis. Please try again later.</p>';
+                            });
+                        });
+                    </script>
+                {% else %}
+                    <p>No search results available for analysis.</p>
+                {% endif %}
             </div>
             
             <div class="result-box">
                 <h2>🔄 Next Steps</h2>
-                <p>No matches found in criminal databases. This profile appears to be safe.</p>
+                <p>{% if is_fbi_match or is_interpol_match %}
+                    A match was found in criminal databases. Please proceed with caution.
+                {% else %}
+                    No matches found in criminal databases. This profile appears to be safe.
+                {% endif %}</p>
                 
                 <div style="margin-top: 20px;">
-                    <a href="profile_verification.html" class="btn btn-primary">
+                    <a href="{{ url_for('profile_verification') }}" class="btn btn-primary">
                         <i class="fas fa-search"></i> Verify Another Profile
                     </a>
-                    <a href="index.html" class="btn btn-outline">
+                    <a href="{{ url_for('home') }}" class="btn btn-outline">
                         <i class="fas fa-home"></i> Back to Home
                     </a>
                 </div>
             </div>
+        {% endif %}
         
         <div class="result-box">
             <h2>🔧 Debug & Troubleshooting</h2>
             <p>If you're experiencing issues with matching, try our debugging tools:</p>
-            <a href="#" class="btn btn-accent">
+            <a href="{{ url_for('debug_fbi_matching') }}" class="btn btn-accent">
                 <i class="fas fa-tools"></i> Debug FBI Matching
             </a>
-            <a href="#" class="btn btn-accent">
+            <a href="{{ url_for('repair_images') }}" class="btn btn-accent">
                 <i class="fas fa-wrench"></i> Repair Image Database
             </a>
         </div>
