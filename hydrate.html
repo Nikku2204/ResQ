@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQ - Hydrate Feature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e5316d;
+            --primary-light: #ff80ab;
+            --primary-dark: #b41e53;
+            --accent: #4361ee;
+            --accent-light: #c5cae9;
+            --danger: #f44336;
+            --danger-light: #ffebee;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --light: #f8f9fa;
+            --dark: #212121;
+            --gray: #757575;
+            --gray-light: #e0e0e0;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 20px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 12px;
+            --radius-lg: 24px;
+            --panel-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark);
+            background-color: #faf5f7;
+            line-height: 1.6;
+            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cpath%20fill%3D%22%23e5316d10%22%20d%3D%22M11.1%2C30.5c-5.5%2C0-9.9%2C4.4-9.9%2C9.9c0%2C5.5%2C4.4%2C9.9%2C9.9%2C9.9s9.9-4.4%2C9.9-9.9C21%2C34.9%2C16.5%2C30.5%2C11.1%2C30.5z%20M40.2%2C76.9c-5.5%2C0-9.9%2C4.4-9.9%2C9.9c0%2C5.5%2C4.4%2C9.9%2C9.9%2C9.9s9.9-4.4%2C9.9-9.9C50.1%2C81.3%2C45.7%2C76.9%2C40.2%2C76.9z%20M85.7%2C11.8c-5.5%2C0-9.9%2C4.4-9.9%2C9.9s4.4%2C9.9%2C9.9%2C9.9c5.5%2C0%2C9.9-4.4%2C9.9-9.9S91.1%2C11.8%2C85.7%2C11.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-size: 300px;
+            background-attachment: fixed;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .feature-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .feature-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .feature-description {
+            font-size: 18px;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .phone-demo {
+            position: relative;
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            aspect-ratio: 9/19;
+            background-color: var(--panel-bg);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-top {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            position: relative;
+        }
+
+        .phone-notch {
+            width: 50%;
+            height: 25px;
+            background-color: #222;
+            border-radius: 0 0 15px 15px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .phone-screen {
+            flex-grow: 1;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .notification {
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            animation: slideIn 0.5s forwards;
+            z-index: 100;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .notification-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            background-color: #29b6f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 10px;
+        }
+
+        .notification-app-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-right: auto;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        .notification-content {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-text {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .notification-button {
+            flex: 1;
+            padding: 6px 0;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-button.safe {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+
+        .notification-button.safe:hover {
+            background-color: #b3e5fc;
+        }
+
+        .notification-button.distress {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .notification-button.distress:hover {
+            background-color: #c8e6c9;
+        }
+
+        .emergency-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0;
+            width: 80%;
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .emergency-popup.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .emergency-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .emergency-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: var(--danger-light);
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 24px;
+        }
+
+        .emergency-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--danger);
+            margin-bottom: 5px;
+        }
+
+        .emergency-description {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .emergency-info {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .emergency-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .emergency-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .emergency-item-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background-color: #f5f5f5;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .emergency-item-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .emergency-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .emergency-button {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .emergency-button.cancel {
+            background-color: #f5f5f5;
+            color: var(--gray);
+        }
+
+        .emergency-button.cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        .emergency-button.confirm {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .emergency-button.confirm:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .phone-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .demo-info {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .info-card {
+            background-color: var(--panel-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .info-icon.disguise {
+            background-color: #9c27b0;
+        }
+
+        .info-icon.location {
+            background-color: var(--accent);
+        }
+
+        .info-icon.alert {
+            background-color: var(--danger);
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info-content {
+            font-size: 15px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .info-content ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-content li {
+            margin-bottom: 5px;
+        }
+
+        .setup-process {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .setup-heading {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .setup-description {
+            font-size: 16px;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .process-cards {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .process-card {
+            background-color: var(--panel-bg);
+            border-radius: var(--radius);
+            width: 260px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .process-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .process-step {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .process-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+
+        .process-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .process-description {
+            font-size: 14px;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        @media (max-width: 992px) {
+            .demo-content {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .phone-demo {
+                order: 1;
+            }
+
+            .demo-info {
+                order: 2;
+            }
+
+            .phone-frame {
+                max-width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .process-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .process-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-title {
+                font-size: 28px;
+            }
+
+            .feature-description {
+                font-size: 16px;
+            }
+
+            .setup-heading {
+                font-size: 24px;
+            }
+
+            .setup-description {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="feature-header">
+            <h1 class="feature-title">Hydrate: Disguised Safety Check-ins</h1>
+            <p class="feature-description">Our innovative safety check-in system disguised as a hydration reminder app, providing a non-suspicious way for users to confirm their safety or signal distress during dates.</p>
+        </div>
+
+        <div class="demo-content">
+            <div class="phone-demo">
+                <div class="phone-frame">
+                    <div class="phone-top">
+                        <div class="phone-notch"></div>
+                    </div>
+                    <div class="phone-screen">
+                        <img class="phone-background" src="iphonebackground.jpg" alt="Phone background">
+                        
+                        <div class="notification">
+                            <div class="notification-header">
+                                <div class="notification-icon">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                                <div class="notification-app-name">Hydrate</div>
+                                <div class="notification-time">now</div>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-text">
+                                    <div class="notification-title">💧 Hydration Reminder</div>
+                                    <div class="notification-message">Have you had water in the last hour?</div>
+                                    <div class="notification-actions">
+                                        <div class="notification-button safe" id="safeButton">👍 Thanks, had some!</div>
+                                        <div class="notification-button distress" id="distressButton">🙂 Will get some soon</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="emergency-popup" id="emergencyPopup">
+                            <div class="emergency-header">
+                                <div class="emergency-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="emergency-title">Emergency Protocol Activated</div>
+                                <div class="emergency-description">Your emergency contacts are being notified with your current location</div>
+                            </div>
+                            <div class="emergency-info">
+                                <div class="emergency-item">
+                                    <div class="emergency-item-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="emergency-item-text">Live location sharing activated</div>
+                                </div>
+                                <div class="emergency-item">
+                                    <div class="emergency-item-icon">
+                                        <i class="fas fa-microphone"></i>
+                                    </div>
+                                    <div class="emergency-item-text">Audio recording in progress</div>
+                                </div>
+                                <div class="emergency-item">
+                                    <div class="emergency-item-icon">
+                                        <i class="fas fa-user-friends"></i>
+                                    </div>
+                                    <div class="emergency-item-text">3 emergency contacts notified</div>
+                                </div>
+                            </div>
+                            <div class="emergency-actions">
+                                <div class="emergency-button cancel" id="cancelButton">Cancel</div>
+                                <div class="emergency-button confirm">Confirm Emergency</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-info">
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon disguise">
+                            <i class="fas fa-mask"></i>
+                        </div>
+                        <h3 class="info-title">Discreet Disguise</h3>
+                    </div>
+                    <div class="info-content">
+                        <p>Our check-in system is disguised as a standard hydration reminder app, allowing you to verify your safety without alerting your date.</p>
+                        <ul>
+                            <li>Appears as innocent water reminder notification</li>
+                            <li>Custom scheduling (30min, 1hr, 2hr intervals)</li>
+                            <li>Response options look completely normal</li>
+                            <li>No indication it's a safety app</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon location">
+                            <i class="fas fa-location-arrow"></i>
+                        </div>
+                        <h3 class="info-title">Smart Location Sharing</h3>
+                    </div>
+                    <div class="info-content">
+                        <p>If you miss a check-in or signal distress, the app automatically begins sharing your location with emergency contacts.</p>
+                        <ul>
+                            <li>Precise GPS location tracking</li>
+                            <li>Updates in real-time as you move</li>
+                            <li>Shares route history for the past 30 minutes</li>
+                            <li>Battery-efficient background tracking</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-header">
+                        <div class="info-icon alert">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 class="info-title">Emergency Protocol</h3>
+                    </div>
+                    <div class="info-content">
+                        <p>Our comprehensive emergency response system activates silently when you signal distress or miss a scheduled check-in.</p>
+                        <ul>
+                            <li>Silent notifications to emergency contacts</li>
+                            <li>Automatic audio recording for evidence</li>
+                            <li>Option to escalate to emergency services</li>
+                            <li>AI analysis of situation severity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setup-process">
+            <h2 class="setup-heading">How to Set Up Your Disguised Check-ins</h2>
+            <p class="setup-description">Setting up your safety check-ins takes just a few minutes and can provide peace of mind throughout your date.</p>
+            
+            <div class="process-cards">
+                <div class="process-card">
+                    <div class="process-step">1</div>
+                    <div class="process-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="process-title">Schedule Check-ins</h3>
+                    <p class="process-description">Choose how often you want to receive check-in notifications during your date.</p>
+                </div>
+                
+                <div class="process-card">
+                    <div class="process-step">2</div>
+                    <div class="process-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="process-title">Add Emergency Contacts</h3>
+                    <p class="process-description">Select trusted friends or family who will be notified if you miss a check-in.</p>
+                </div>
+                
+                <div class="process-card">
+                    <div class="process-step">3</div>
+                    <div class="process-icon">
+                        <i class="fas fa-comment-alt"></i>
+                    </div>
+                    <h3 class="process-title">Customize Messages</h3>
+                    <p class="process-description">Pre-write the message that will be sent to your contacts in case of emergency.</p>
+                </div>
+                
+                <div class="process-card">
+                    <div class="process-step">4</div>
+                    <div class="process-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3 class="process-title">Configure Location Sharing</h3>
+                    <p class="process-description">Set up how your location will be shared if your emergency protocol is activated.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo Interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            const distressButton = document.getElementById('distressButton');
+            const emergencyPopup = document.getElementById('emergencyPopup');
+            const cancelButton = document.getElementById('cancelButton');
+            const safeButton = document.getElementById('safeButton');
+            
+            distressButton.addEventListener('click', function() {
+                setTimeout(() => {
+                    emergencyPopup.classList.add('active');
+                }, 500);
+            });
+            
+            cancelButton.addEventListener('click', function() {
+                emergencyPopup.classList.remove('active');
+            });
+            
+            safeButton.addEventListener('click', function() {
+                // Just hide the notification when safe
+                safeButton.closest('.notification').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
