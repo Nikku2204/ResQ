@@ -11,6 +11,13 @@ import imghdr
 import concurrent.futures
 from functools import partial
 import json
+import sys
+import os
+# Add the directory containing location_safety_insights.py to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Import the necessary functions from location_safety_insights
+from location_safety_insights import location_safety_page, api_location_safety, api_safety_insight
+
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +29,11 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 
 app = Flask(__name__)
 client = vision.ImageAnnotatorClient()
+# Add these lines after you've defined your Flask app
+# Register the location safety routes
+app.route('/location_safety')(location_safety_page)
+app.route('/api/get_location_safety', methods=['POST'])(api_location_safety)
+app.route('/api/get_safety_insight', methods=['POST'])(api_safety_insight)
 
 # Directories
 upload_folder = "static/uploads"
