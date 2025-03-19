@@ -1155,7 +1155,7 @@
             <div class="header-content">
                 <a href="#" class="logo">
                     <div class="logo-icon">
-                        <img src="icon.png" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img src="{{ url_for('static', filename='images/icon.png') }}" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="logo-text">Res<span class="highlight">Q</span></div>
                 </a>
@@ -1165,6 +1165,7 @@
                         <li><a href="#how-it-works">How It Works</a></li>
                         <li><a href="#testimonials">Testimonials</a></li>
                         <li><a href="#download">Download</a></li>
+                        <li><a href="{{ url_for('location_safety_page') }}">Safety Map</a></li>
                     </ul>
                 </nav>
                 <div class="cta-buttons">
@@ -1189,6 +1190,7 @@
             <li><a href="#how-it-works">How It Works</a></li>
             <li><a href="#testimonials">Testimonials</a></li>
             <li><a href="#download">Download</a></li>
+            <li><a href="{{ url_for('location_safety_page') }}">Safety Map</a></li>
         </ul>
         <a href="#" class="btn btn-outline">Log In</a>
         <a href="#" class="btn btn-primary">Sign Up</a>
@@ -1216,7 +1218,7 @@
                         <!-- Hero badges removed as requested -->
                 </div>
                 <div class="hero-image">
-                    <img src="icon.png" alt="ResQ App Interface">
+                    <img src="{{ url_for('static', filename='images/icon.png') }}" alt="ResQ App Interface">
                     <div class="hero-floating-badge location">
                         <div class="badge-icon location">
                             <i class="fas fa-map-marker-alt"></i>
@@ -1240,90 +1242,90 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h4 class="section-subtitle">Key Features</h4>
-                <h2 class="section-title">Everything You Need for <span>Date Safety</span></h2>
-                <p class="section-description">
-                    ResQ is designed with your safety in mind, combining AI-powered analysis with practical safety features for peace of mind on every date, regardless of who you are.
-                </p>
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h4 class="section-subtitle">Key Features</h4>
+                    <h2 class="section-title">Everything You Need for <span>Date Safety</span></h2>
+                    <p class="section-description">
+                        ResQ is designed with your safety in mind, combining AI-powered analysis with practical safety features for peace of mind on every date, regardless of who you are.
+                    </p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon location">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 class="feature-title">Advanced Profile Verification</h3>
+                        <p class="feature-description">
+                            Our multimodal LLMs analyze images across platforms to detect inconsistencies, verify identities, and identify relationship indicators that may not be apparent to users, providing a comprehensive authenticity assessment before in-person meetings.
+                        </p>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <a href="{{ url_for('profile_verification') }}" class="btn btn-outline" style="font-size: 14px;">
+                                <i class="fas fa-user-shield"></i> Try Profile Verification
+                            </a>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon check">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Location Safety Intelligence</h3>
+                        <p class="feature-description">
+                            By integrating with public safety data sources, we use generative AI to analyze incident patterns and create personalized safety recommendations based on location, time, and user profile.
+                        </p>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <a href="{{ url_for('aware_ai_demo') }}" class="btn btn-outline" style="font-size: 14px;">
+                                <i class="fas fa-map-marked-alt"></i> Try Safety Map Demo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon audio">
+                            <i class="fas fa-ambulance"></i>
+                        </div>
+                        <h3 class="feature-title">Smart Emergency Response</h3>
+                        <p class="feature-description">
+                            Generative AI enhances emergency response by providing real-time situation assessment, generating precise location information, and determining the appropriate response level for emergency services.
+                        </p>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <a href="{{ url_for('hydrate') }}" class="btn btn-outline" style="font-size: 14px;">
+                                <i class="fas fa-tint"></i> Try Hydrate Demo
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Rest of the feature cards remain the same -->
+                    <div class="feature-card">
+                        <div class="feature-icon route">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h3 class="feature-title">Safe Routes</h3>
+                        <p class="feature-description">
+                            Get route recommendations that avoid high-crime areas and stick to well-lit, safer streets when walking to your destination.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon safety">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="feature-title">Trusted Contacts</h3>
+                        <p class="feature-description">
+                            Add friends and family who can receive instant alerts with your precise location and route information in case of emergency.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon alert">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="feature-title">AI Safety Analysis</h3>
+                        <p class="feature-description">
+                            Our AI continuously assesses your situation using multiple data points to detect potential threats and provide safety recommendations.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon location">
-                        <i class="fas fa-user-check"></i>
-                    </div>
-                    <h3 class="feature-title">Advanced Profile Verification</h3>
-                    <p class="feature-description">
-                        Our multimodal LLMs analyze images across platforms to detect inconsistencies, verify identities, and identify relationship indicators that may not be apparent to users, providing a comprehensive authenticity assessment before in-person meetings.
-                    </p>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="profile_verification.html" class="btn btn-outline" style="font-size: 14px;">
-                            <i class="fas fa-user-shield"></i> Try Profile Verification
-                        </a>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon check">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Location Safety Intelligence</h3>
-                    <p class="feature-description">
-                        By integrating with public safety data sources, we use generative AI to analyze incident patterns and create personalized safety recommendations based on location, time, and user profile.
-                    </p>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="aware_ai_demo.html" class="btn btn-outline" style="font-size: 14px;">
-                            <i class="fas fa-map-marked-alt"></i> Try Safety Map Demo
-                        </a>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon audio">
-                        <i class="fas fa-ambulance"></i>
-                    </div>
-                    <h3 class="feature-title">Smart Emergency Response</h3>
-                    <p class="feature-description">
-                        Generative AI enhances emergency response by providing real-time situation assessment, generating precise location information, and determining the appropriate response level for emergency services.
-                    </p>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <a href="hydrate.html" class="btn btn-outline" style="font-size: 14px;">
-                            <i class="fas fa-tint"></i> Try Hydrate Demo
-                        </a>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon route">
-                        <i class="fas fa-route"></i>
-                    </div>
-                    <h3 class="feature-title">Safe Routes</h3>
-                    <p class="feature-description">
-                        Get route recommendations that avoid high-crime areas and stick to well-lit, safer streets when walking to your destination.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon safety">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="feature-title">Trusted Contacts</h3>
-                    <p class="feature-description">
-                        Add friends and family who can receive instant alerts with your precise location and route information in case of emergency.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon alert">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="feature-title">AI Safety Analysis</h3>
-                    <p class="feature-description">
-                        Our AI continuously assesses your situation using multiple data points to detect potential threats and provide safety recommendations.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+        </section>
     <!-- How It Works Section -->
     <section class="how-it-works" id="how-it-works">
         <div class="container">
@@ -1336,7 +1338,7 @@
             </div>
             <div class="steps-container">
                 <div class="steps-image">
-                    <img src="icon.png" alt="ResQ App Interface">
+                    <img src="{{ url_for('static', filename='images/icon.png') }}" alt="ResQ App Interface">
                 </div>
                 <div class="steps-content">
                     <ul class="steps-list">
@@ -1434,7 +1436,7 @@
                 <div class="footer-logo">
                     <a href="#">
                         <div class="footer-logo-icon">
-                            <img src="icon.png" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                            <img src="{{ url_for('static', filename='images/icon.png') }}" alt="ResQ Logo" style="width: 100%; height: 100%; object-fit: contain;">
                         </div>
                         <div class="footer-logo-text">Res<span class="highlight">Q</span></div>
                     </a>
