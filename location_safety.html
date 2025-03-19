@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Location Safety Insights - ResQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif; 
+            background-color: #fafafa; 
+            color: #333; 
+            padding: 0; 
+            margin: 0;
+        }
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #e5316d;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        .logo-text span {
+            color: #e5316d;
+        }
+        .container {
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .page-title {
+            color: #e5316d; 
+            font-size: 2rem; 
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .map-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        #map {
+            height: 500px; 
+            width: 100%; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .map-instructions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 250px;
+        }
+        .btn {
+            padding: 10px 20px; 
+            background: #e5316d; 
+            color: white; 
+            border-radius: 100px; 
+            text-decoration: none; 
+            display: inline-block;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #c82559;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 49, 109, 0.25);
+        }
+        .loading {
+            margin: 20px 0; 
+            font-size: 1.2rem; 
+            color: #888;
+        }
+        .safety-results {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .result-card {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .score-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .score-value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #e5316d;
+            line-height: 1;
+        }
+        .score-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .safety-level {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .very-safe { background: #e6f7e9; color: #2e7d32; }
+        .safe { background: #e8f5e9; color: #388e3c; }
+        .moderate { background: #fff8e1; color: #ff8f00; }
+        .high-risk { background: #fff3e0; color: #ef6c00; }
+        .very-high-risk { background: #ffebee; color: #c62828; }
+        
+        .incident-summary h3,
+        .recommendations h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .recommendations {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .safety-insight-summary {
+            margin-top: 30px; 
+            background: white; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .safety-insight-summary h2 {
+            color: #e5316d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .insight-loading {
+            padding: 20px;
+            color: #666;
+            text-align: center;
+        }
+        .insight-text {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #e5316d;
+            line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .map-instructions {
+                position: static;
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">Res<span>Q</span></div>
+            </a>
+            <a href="/" class="btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+    </div>
+    <div class="container">
+        <h1 class="page-title">📍 Location Safety Intelligence</h1>
+        <p class="subtitle">Explore safety scores and AI-generated safety recommendations in real-time based on geographic data. Click anywhere on the map to analyze that location.</p>
+        
+        <div class="map-container">
+            <div class="map-instructions">
+                <strong>How to use:</strong>
+                <p>Click anywhere on the map to analyze the safety of that location. Red dots indicate reported incidents.</p>
+            </div>
+            <div id="map"></div>
+        </div>
+        <div class="loading" id="loading">Loading safety data...</div>
+        <div class="safety-results" id="safety-results">
+            <h2>Safety Analysis Results</h2>
+            <div class="location-details" id="location-details">
+                Analyzing: <span id="location-address">Unknown Location</span>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="score-display">
+                        <div class="score-value" id="safety-score">--</div>
+                        <div class="score-label">SAFETY SCORE</div>
+                    </div>
+                    <div class="safety-level" id="safety-level">Analyzing...</div>
+                    
+                    <div class="incident-summary">
+                        <h3>Incident Summary</h3>
+                        <p id="incident-count">No data available</p>
+                        <p id="top-incidents">No incident data available</p>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="recommendations">
+                        <h3>AI Safety Recommendations</h3>
+                        <p id="recommendations">Click on a location to get personalized safety recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Safety Insight Summary Section -->
+        <div class="safety-insight-summary" id="safety-insight-summary" style="display: none;">
+            <h2><i class="fas fa-brain"></i> AI Safety Insight</h2>
+            <div class="insight-content" id="insight-content">
+                <div class="insight-loading" id="insight-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Generating personalized safety insight...
+                </div>
+                <div class="insight-text" id="insight-text" style="display: none;">
+                    <!-- AI-generated summary will go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var map = L.map('map').setView([47.6062, -122.3321], 13); // Default to Seattle
+            var currentMarker = null;
+            
+            // OpenStreetMap Tile Layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            var incidents = {{ incidents|tojson }};
+            
+            if (incidents.length === 0) {
+                document.getElementById("loading").innerText = "No incident data available. You can still click on the map to analyze locations.";
+            } else {
+                document.getElementById("loading").style.display = "none";
+                // Create an incident layer
+                var incidentLayer = L.layerGroup().addTo(map);
+                
+                incidents.forEach(function (incident) {
+                    L.circleMarker([incident.Latitude, incident.Longitude], {
+                        radius: 5,
+                        fillColor: "#e5316d",
+                        color: "#fff",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    }).bindPopup("<b>Offense:</b> " + incident.Offense).addTo(incidentLayer);
+                });
+            }
+            
+            // Handle map clicks for safety analysis
+            map.on('click', function(e) {
+                analyzeLocation(e.latlng.lat, e.latlng.lng);
+            });
+            
+            // Function to analyze a location
+            function analyzeLocation(lat, lon) {
+                // Show loading state
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('loading').innerText = 'Analyzing location safety...';
+                document.getElementById('safety-results').style.display = 'none';
+                document.getElementById('safety-insight-summary').style.display = 'none';
+                
+                // Add marker at clicked location
+                if (currentMarker) {
+                    map.removeLayer(currentMarker);
+                }
+                currentMarker = L.marker([lat, lon]).addTo(map)
+                    .bindPopup('Analyzing safety at this location...').openPopup();
+                
+                // Reverse geocode to get location name
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let locationName = 'Unknown location';
+                        if (data && data.display_name) {
+                            locationName = data.display_name;
+                        }
+                        document.getElementById('location-address').innerText = locationName;
+                    })
+                    .catch(err => {
+                        console.error('Error getting location name:', err);
+                    });
+                
+                // Get current time period
+                const currentTimePeriod = getCurrentTimePeriod();
+                
+                // Call API for safety analysis
+                fetch('/api/get_location_safety', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: lat,
+                        longitude: lon,
+                        time_hour: currentTimePeriod
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading and show results
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('safety-results').style.display = 'block';
+                    
+                    // Update safety info
+                    document.getElementById('safety-score').innerText = Math.round(data.safety.score);
+                    
+                    const safetyLevel = document.getElementById('safety-level');
+                    safetyLevel.innerText = data.safety.level;
+                    
+                    // Reset safety level classes
+                    safetyLevel.className = 'safety-level';
+                    
+                    // Apply appropriate class based on safety level
+                    if (data.safety.level === 'Very Safe') {
+                        safetyLevel.classList.add('very-safe');
+                    } else if (data.safety.level === 'Safe') {
+                        safetyLevel.classList.add('safe');
+                    } else if (data.safety.level === 'Moderate Risk') {
+                        safetyLevel.classList.add('moderate');
+                    } else if (data.safety.level === 'High Risk') {
+                        safetyLevel.classList.add('high-risk');
+                    } else if (data.safety.level === 'Very High Risk') {
+                        safetyLevel.classList.add('very-high-risk');
+                    }
+                    
+                    // Update incident info
+                    document.getElementById('incident-count').innerText = 
+                        `Total incidents nearby: ${data.safety.incident_summary.total_incidents}`;
+                    
+                    // Format top incidents
+                    let topIncidentsText = 'Most common incidents: ';
+                    const topIncidents = data.safety.incident_summary.top_incidents;
+                    if (Object.keys(topIncidents).length === 0) {
+                        topIncidentsText += 'None reported';
+                    } else {
+                        topIncidentsText += Object.entries(topIncidents)
+                            .map(([incident, count]) => `${incident} (${count})`)
+                            .join(', ');
+                    }
+                    document.getElementById('top-incidents').innerText = topIncidentsText;
+                    
+                    // Update recommendations
+                    document.getElementById('recommendations').innerText = data.recommendations;
+                    
+                    // Update marker popup
+                    if (currentMarker) {
+                        currentMarker.setPopupContent(
+                            `<b>Safety Score:</b> ${Math.round(data.safety.score)}/100<br>
+                            <b>Safety Level:</b> ${data.safety.level}`
+                        );
+                    }
+                    
+                    // Show and prepare safety insight section
+                    document.getElementById('safety-insight-summary').style.display = 'block';
+                    document.getElementById('insight-loading').style.display = 'block';
+                    document.getElementById('insight-text').style.display = 'none';
+                    
+                    // Request safety insight
+                    fetch('/api/get_safety_insight', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            latitude: lat,
+                            longitude: lon,
+                            safety_level: data.safety.level,
+                            score: data.safety.score,
+                            incident_summary: data.safety.incident_summary
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(insightData => {
+                        document.getElementById('insight-loading').style.display = 'none';
+                        document.getElementById('insight-text').style.display = 'block';
+                        document.getElementById('insight-text').innerHTML = `<p>${insightData.insight}</p>`;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching safety insight:', error);
+                        document.getElementById('insight-loading').style.display = 'none';
+                        document.getElementById('insight-text').style.display = 'block';
+                        document.getElementById('insight-text').innerHTML = '<p>Unable to generate additional safety insights at this time.</p>';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading').innerText = 'Error analyzing location. Please try again.';
+                    if (currentMarker) {
+                        currentMarker.setPopupContent('Error analyzing this location');
+                    }
+                });
+            }
+            
+            // Helper to determine current time period
+            function getCurrentTimePeriod() {
+                const hour = new Date().getHours();
+                if (hour >= 0 && hour < 6) {
+                    return 'Night (12AM-6AM)';
+                } else if (hour >= 6 && hour < 12) {
+                    return 'Morning (6AM-12PM)';
+                } else if (hour >= 12 && hour < 18) {
+                    return 'Afternoon (12PM-6PM)';
+                } else {
+                    return 'Evening (6PM-12AM)';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
