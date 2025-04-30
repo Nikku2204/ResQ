@@ -1,6 +1,6 @@
 # resQ AI
 
-![ResQ AI Logo](media/image6.png)
+![ResQ AI Logo](icon.png)
 
 ## Empowering Personal Safety Through Artificial Intelligence
 
