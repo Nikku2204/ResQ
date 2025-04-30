@@ -6,6 +6,8 @@
 
 ResQ AI is a comprehensive personal safety application designed to empower users with proactive safety tools while navigating both physical environments and digital interactions. Unlike traditional safety apps that only react after incidents occur, ResQ focuses on preventative measures, helping users identify potential threats before they become dangers.
 
+Watch demo - https://drive.google.com/file/d/1WrPpfZ5piv_BinOXB5Ets7_46DvuGTsU/view?usp=sharing
+
 ## Core Features
 
 ### 🔍 Advanced Profile Verification
